@@ -27,7 +27,7 @@ const createCollege = async function (req, res) {
                 }
                 return res.status(201).send({ status: true, data: collegeCreateDetails})
             })
-            .catch(err => res.status(404).send({ status: false, message: "please enter valid logoLink" }))
+            .catch(err => res.status(400).send({ status: false, message: "please enter valid logoLink" }))
     }
     catch (err) { return res.status(500).send({ status: false, message: err.message }); }
 }
