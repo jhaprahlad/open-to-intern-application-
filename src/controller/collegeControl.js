@@ -1,59 +1,60 @@
-const collegeModel = require ('../models/collegeModel');
+const collegeModel = require('../models/collegeModel');
 const internModel = require('../models/internModel')
 
 const axios = require('axios');
 
-const createCollege = async function(req,res){
-    try{
-    let input  = req.body;
-    const {name , fullName, logoLink} = input;
-    if(!name || !fullName || !logoLink){
-        return res.status(400).send({status : false, message:"Please provide manadatory details!!"})
-    }
-    try{
-    const response = await axios.get(logoLink);
-    if (response.status < 200 && response.status > 299 ) {
-        return res.status(400).send({ status: false, message: "LogoLink is not active" });
-    }   
-    } catch(err) { return res.status(500).send({status : false, message : err.message}) }
+const createCollege = async function (req, res) {
+    try {
+        let input = req.body;
+        const { name, fullName, logoLink } = input;
+        if (!name || !fullName || !logoLink) {
+            return res.status(400).send({ status: false, message: "Please provide manadatory details!!" })
+        }
 
-    const isName = await collegeModel.findOne({ name: name });
-    if (isName) {
-      return res.status(400).send({ status: false, message: "College already registered" });
-    }
+        await axios.get(logoLink)
+            .then(async () => {
+                const isName = await collegeModel.findOne({ name: name });
+                if (isName) {
+                    return res.status(400).send({ status: false, message: "College already registered" });
+                }
 
-    let collegeCreated = await collegeModel.create(input)
-    return res.status(201).send({ status: true, data: collegeCreated })
+                let collegeCreated = await collegeModel.create(input)
+                let collegeCreateDetails = {
+                    "name": collegeCreated.name,
+                    "fullName": collegeCreated.fullName,
+                    "logoLink": collegeCreated.logoLink,
+                    "isDeleted": collegeCreated.isDeleted
+                }
+                return res.status(201).send({ status: true, data: collegeCreateDetails})
+            })
+            .catch(err => res.status(404).send({ status: false, message: "please enter valid logoLink" }))
     }
-    catch(err){ return res.status(500).send({status : false, message : err.message});}
+    catch (err) { return res.status(500).send({ status: false, message: err.message }); }
 }
 //=========================== GET API ============================================
 const collegeDetails = async function (req, res) {
     try {
         const collegeName = req.query.collegeName
-        const college = await collegeModel.findOne({ name: collegeName }).select({ _id: 0, name: 1, fullName: 1, logoLink: 1 })
-        const collegeId = await collegeModel.findOne({ name: collegeName }).select({_id:1})
-
-        if(!collegeId) return res.status(404).send({status : true, message : "College not found"})
-
-        const intern= await internModel.find({collegeId:collegeId}).select({_id:1,name:1,email:1,mobile:1})
-        const collegeObject = college.toObject();
-        if(intern.length==0){
-            // console.log(typeof college)
-            collegeObject.interns= "interns are not available"
-        }else{
-            // console.log(typeof college)
-        collegeObject.interns= intern
+        if(! collegeName || collegeName.trim() == '') return res.status(400).json({ status: false, message: 'College Name is required' });
+        else{
+            const college = await collegeModel.findOne({ name: collegeName });
+            if(!college) return res.status(404).json({ status: false, message: 'College not found' });
+            else{
+                const intern = await internModel.find({ collegeId: college._id }).select({ name: 1, email: 1, mobile: 1 });
+                const details = {
+                    name : college.name,
+                    fullName : college.fullName,
+                    logoLink : college.logoLink,
+                    Interns : intern
+                }
+                res.status(200).json({ status: true, data: details });
+            }
         }
-        if(!college){
-            res.status(404).send({status:false, message: "College not available!"})
-        }
-        res.status(200).send({ status: true, data:collegeObject })
+    } catch (error) {
+        res.status(500).json({ status: false, message: error.message });
     }
-    catch (err) {
-        res.status(500).send({ status: false, message: err.message })
-    }
+   
 }
 
-module.exports.createCollege=createCollege;
-module.exports.collegeDetails=collegeDetails;
+module.exports.createCollege = createCollege;
+module.exports.collegeDetails = collegeDetails;
