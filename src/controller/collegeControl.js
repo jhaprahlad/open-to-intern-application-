@@ -35,7 +35,7 @@ const createCollege = async function (req, res) {
 const collegeDetails = async function (req, res) {
     try {
         const collegeName = req.query.collegeName
-        if(! collegeName || collegeName.trim() == '') return res.status(400).json({ status: false, message: 'College Name is required' });
+        if(! collegeName || collegeName.trim() == '') return res.status(404).json({ status: false, message: 'College Name is required' });
         else{
             const college = await collegeModel.findOne({ name: collegeName });
             if(!college) return res.status(404).json({ status: false, message: 'College not found' });
