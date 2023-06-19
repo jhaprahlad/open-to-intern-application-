@@ -3,17 +3,17 @@ const mongoose = require('mongoose')
 const collegeSchema = new mongoose.Schema({
     name : {
         type : String,
-        require : true,
+        required: true,
         unique : true
     },
     fullName : {
         type : String,
-        require : true,
+        required: true,
         unique : true
     },
     logoLink :{
         type : String,
-        require : true
+        required: true
         // unique : true
     },
     isDeleted: {

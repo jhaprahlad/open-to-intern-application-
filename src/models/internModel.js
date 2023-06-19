@@ -5,17 +5,19 @@ const ObjectId = mongoose.Types.ObjectId;
 const internSchema = new mongoose.Schema({
     name: {
         type : String,
-        require : true
+        required: true
+
+        
     }, 
     email : {
         type : String,
-        require : true,
+        required: true,
         unique : true,
         validate: [{ validator: validator.isEmail, message: 'Please enter email in correct format' }]
     },
     mobile : {
         type : String,
-        reuqire : true,
+        required: true,
         unique : true,
         minlength : 10,
         maxength : 10
@@ -23,7 +25,7 @@ const internSchema = new mongoose.Schema({
     collegeId: {
         type : ObjectId, 
         ref : 'College',
-        require : true
+        required: true
     },
     isDeleted: {
         type : Boolean, 
