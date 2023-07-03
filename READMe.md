@@ -1,129 +1,61 @@
-# Technetium
+## Open to Intern Documentation
 
-## Open to Intern Project Requirement
+This documentation provides an overview of the Open-to-Intern project and its requirements. Open-to-Intern is a software project aimed at managing college and intern data for an internship platform.
+### Project Requirements
 
-### Models
-- College Model
-```
-{ name: { mandatory, unique, example iith}, fullName: {mandatory, example `Indian Institute of Technology, Hyderabad`}, logoLink: {mandatory}, isDeleted: {boolean, default: false} }
-```
-- Intern Model
-```
-{ name: {mandatory}, email: {mandatory, valid email, unique}, mobile: {mandatory, valid mobile number, unique}, collegeId: {ObjectId, ref to college model, isDeleted: {boolean, default: false}}
-```
+#### Models
 
-### POST /functionup/colleges
-- Create a college - a document for each member of the group
-- The logo link will be provided to you by the mentors. This link is a s3 (Amazon's Simple Service) url. Try accessing the link to see if the link is public or not.
+- **College Model**
+  - **name**: A mandatory and unique field representing the abbreviated name of the college (e.g., "iith").
+  - **fullName**: A mandatory field representing the full name of the college (e.g., "Indian Institute of Technology, Hyderabad").
+  - **logoLink**: A mandatory field representing the URL of the college's logo.
+  - **isDeleted**: A boolean field with a default value of false, indicating whether the college is deleted.
 
-  `Endpoint: BASE_URL/functionup/colleges`
+- **Intern Model**
+  - **name**: A mandatory field representing the name of the intern.
+  - **email**: A mandatory and unique field representing the email of the intern. It should be a valid email address.
+  - **mobile**: A mandatory and unique field representing the mobile number of the intern. It should be a valid mobile number.
+  - **collegeId**: An ObjectId field referencing the College model.
+  - **isDeleted**: A boolean field with a default value of false, indicating whether the intern is deleted.
 
-### POST /functionup/interns
-- Create a document for an intern. 
-- Also save the collegeId along with the document. Your request body contains the following fields - { name, mobile, email, collegeName}
-- Return HTTP status 201 on a succesful document creation. Also return the document. The response should be a JSON object like [this](#Intern) 
+#### POST /functionup/colleges
 
-- Return HTTP status 400 for an invalid request with a response body like [this](#error-response-structure)
+This endpoint is used to create a new college document. The request should include the following fields:
 
-### GET /functionup/collegeDetails
-- Returns the college details for the requested college (Expect a query parameter by the name `collegeName`. This is anabbreviated college name. For example `iith`)
-- Returns the list of all interns who have applied for internship at this college.
-- The response structure should look like [this](#college-details)
+- **name**: The abbreviated name of the college.
+- **fullName**: The full name of the college.
+- **logoLink**: The URL of the college's logo.
+
+The endpoint expects a POST request to the following URL: `BASE_URL/functionup/colleges`.
+
+#### POST /functionup/interns
+
+This endpoint is used to create a new intern document. The request should include the following fields:
+
+- **name**: The name of the intern.
+- **mobile**: The mobile number of the intern.
+- **email**: The email address of the intern.
+- **collegeName**: The name of the college where the intern is associated.
+
+The endpoint expects a POST request to the following URL: `BASE_URL/functionup/interns`.
+
+If the document creation is successful, the server should return a JSON object representing the created document and a response with HTTP status 201. If the request is invalid, the server should return an HTTP status 400 with an error response structure.
+
+#### GET /functionup/collegeDetails
+
+This endpoint is used to retrieve the details of a college and the list of interns who have applied for internships at that college. The request should include the following query parameter:
+
+- **collegeName**: The abbreviated name of the college.
+
+The endpoint expects a GET request to the following URL: `BASE_URL/functionup/collegeDetails`.
+
+The server should return a response with the college details and the list of interns who have applied for internships at that college.
 
 
-## Testing 
-- To test these apis create a new collection in Postman named Project 2 Internship
-- Each api should have a new request in this collection
-- Each request in the collection should be rightly named. Eg Create college, Get college details etc
-- Each member of each team should have their tests in running state
 
+For additional information about project requirements, refer to the provided sources:
 
-Refer below sample
-
- ![A Postman collection and request sample](assets/Postman-collection-sample.png)
-
-## Response
-
-### Successful Response structure
-```yaml
-{
-  status: true,
-  data: {
-
-  }
-}
-```
-### Error Response structure
-```yaml
-{
-  status: false,
-  message: ""
-}
-```
-
-## Collections samples
-
-#### College
-```yaml
-{
-  status: true,
-  data: {
-        "name" : "iith",
-        "fullName" : "Indian Institute of Technology, Hyderabad",
-        "logoLink" : "https://functionup.s3.ap-south-1.amazonaws.com/colleges/iith.png",
-        "isDeleted" : false
-         }
-}
-```
-#### Intern
-```yaml
-{
-  status: true,
-  data: {
-        "isDeleted" : false,
-        "name" : "Jane Does",
-        "email" : "jane.doe@iith.in",
-        "mobile" : "90000900000",
-        "collegeId" : ObjectId("888771129c9ea621dc7f5e3b")
-        }
-}
-```
-## Response samples
-
-### College details
-```yaml
-{
-  status: true,
-  "data": {
-    "name": "xyz",
-    "fullName": "Some Institute of Engineering and Technology",
-    "logoLink": "some public s3 link for a college logo",
-    "interns": [
-      {
-        "_id": "123a47301a53ecaeea02be59",
-        "name": "Jane Doe",
-        "email": "jane.doe@miet.ac.in",
-        "mobile": "8888888888"
-      },
-      {
-        "_id": "45692c0e1a53ecaeea02b1ac",
-        "name": "John Doe",
-        "email": "john.doe@miet.ac.in",
-        "mobile": "9999999999"
-      },
-      {
-        "_id": "7898d0251a53ecaeea02a623",
-        "name": "Sukruti",
-        "email": "dummy.email@miet.ac.in",
-        "mobile": "9191919191"
-      },
-      {
-        "_id": "999803da1a53ecaeea02a07e",
-        "name": "Neeraj Kumar",
-        "email": "another.example@miet.ac.in",
-        "mobile": "9898989898"
-      }
-    ]
-  }
-}
-```
+1. How to Write Project Requirements | Smartsheet. [[1](https://www.smartsheet.com/content/project-requirements)]
+2. Tips for Technical Requirements Documents | Smartsheet. [[2](https://www.smartsheet.com/wise-words-about-writing-technical-requirements-documents)]
+3. A Guide to Different Requirements Documentation - Indeed. [[3](https://ca.indeed.com/career-advice/career-development/requirements-documentation)]
+4. Technical Documentation Intern
